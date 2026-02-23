@@ -36,17 +36,13 @@ Abra o **PowerShell como Administrador** no Windows Server e execute os seguinte
 2. **Liberar conexões NTLM de hosts não pertencentes ao domínio (como o seu container Docker):**
 *Atenção: Para maior segurança em produção, substitua o `*` pelo IP da sua máquina Docker.*
 
-```powershell
-Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
-
-```
+    ```powershell
+    Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
+    ```
 3. **Reiniciar o serviço para aplicar as regras:**
-```powershell
-Restart-Service WinRM
-
-```
-
-
+    ```powershell
+    Restart-Service WinRM
+    ```
 
 > **Nota sobre o Usuário de Serviço:** O usuário configurado na variável `WINRM_USER` precisa ter privilégios para alterar senhas de outros usuários no AD. Em um ambiente de testes, um Domain Admin funciona perfeitamente. Em produção, recomenda-se criar uma conta de serviço com privilégios delegados apenas para *Reset Password* nas OUs desejadas.
 
