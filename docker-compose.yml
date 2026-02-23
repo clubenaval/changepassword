@@ -1,0 +1,25 @@
+services:
+  ad-password-reset:
+    build: .
+    container_name: ad-password-reset
+    hostname: ad-password-reset
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      # Configurações do Active Directory
+      - AD_SERVER=ad.dominio.intra
+      - AD_DOMAIN=dominio.intra
+      - AD_NETBIOS=dominio
+      - AD_BASE_DN=DC=dominio,DC=intra
+      
+      # Credenciais para a ponte WinRM
+      - WINRM_USER=usuario@dominio.intra
+      - WINRM_PASS=senha_usuario
+      
+      # Configurações do Flask
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      - SECRET_KEY=Henrique_Tech_2026_Secure_Key_!

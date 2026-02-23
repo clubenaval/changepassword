@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoatendimento - Clube Naval</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="card-container">
+        <div class="card">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='naval.jpg') }}" alt="Clube Naval" class="card-logo">
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn {% if active_tab == 'alterar' %}active{% endif %}" onclick="openTab(event, 'alterarTab')">Alterar Senha</button>
+                <button class="tab-btn {% if active_tab == 'consultar' %}active{% endif %}" onclick="openTab(event, 'consultarTab')">Consultar Validade</button>
+            </div>
+
+            <div class="card-header">
+                <h2 id="headerTitle">{% if active_tab == 'consultar' %}Consultar Validade{% else %}Atualizar Senha{% endif %}</h2>
+                <p id="headerDesc">{% if active_tab == 'consultar' %}Veja quanto tempo falta para sua senha expirar{% else %}Mantenha seu acesso seguro{% endif %}</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <div id="alterarTab" class="tab-content {% if active_tab == 'alterar' %}active{% endif %}">
+                <form method="POST" action="/" id="passwordForm">
+                    <input type="hidden" name="action" value="alterar">
+                    <div class="input-group">
+                        <label for="username_alt">Usuário de Rede</label>
+                        <input type="text" id="username_alt" name="username" required placeholder="Ex: joao.silva">
+                    </div>
+                    <div class="input-group">
+                        <label for="current_password_alt">Senha Atual</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="current_password_alt" name="current_password" required>
+                            <span class="toggle-password" onclick="togglePassword('current_password_alt', this)"></span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="new_password">Nova Senha</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="new_password" name="new_password" required>
+                            <span class="toggle-password" onclick="togglePassword('new_password', this)"></span>
+                        </div>
+                        
+                        <ul id="password-requirements" class="req-list">
+                            <li id="req-length" class="invalid"><span>✕</span> Pelo menos 8 caracteres</li>
+                            <li id="req-upper-lower" class="invalid"><span>✕</span> Letras maiúsculas e minúsculas</li>
+                            <li id="req-number" class="invalid"><span>✕</span> Pelo menos um número</li>
+                            <li id="req-special" class="invalid"><span>✕</span> Pelo menos um caractere especial</li>
+                            <li id="req-user" class="invalid"><span>✕</span> Não pode conter o seu usuário</li>
+                        </ul>
+                    </div>
+                    <div class="input-group">
+                        <label for="confirm_password">Confirme a Nova Senha</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="confirm_password" name="confirm_password" required>
+                            <span class="toggle-password" onclick="togglePassword('confirm_password', this)"></span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit" disabled style="opacity: 0.5; cursor: not-allowed;">Atualizar Senha Agora</button>
+                </form>
+            </div>
+
+            <div id="consultarTab" class="tab-content {% if active_tab == 'consultar' %}active{% endif %}">
+                <form method="POST" action="/" id="formConsultar">
+                    <input type="hidden" name="action" value="consultar">
+                    <div class="input-group">
+                        <label for="username_cons">Usuário de Rede</label>
+                        <input type="text" id="username_cons" name="username" required placeholder="Ex: joao.silva">
+                    </div>
+                    <div class="input-group">
+                        <label for="current_password_cons">Senha Atual</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="current_password_cons" name="current_password" required>
+                            <span class="toggle-password" onclick="togglePassword('current_password_cons', this)"></span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit" style="background-color: #444;">Verificar Expiração</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
