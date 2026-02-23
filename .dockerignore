@@ -1,7 +1,11 @@
 docker-compose-senhas.yml
 docker-compose.yml
 README.md
+Dockerfile
+deploy.sh
 __pycache__
 __pycache__/
 .git/
 .github/
+.gitignore
+.dockerignore
