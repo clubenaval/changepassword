@@ -58,11 +58,10 @@ Este projeto foi desenhado para ser executado via Docker. Você não precisa de 
 
 1. Clone o repositório:
 ```bash
-git clone [https://github.com/SEU_USUARIO/ad-self-service-password.git](https://github.com/SEU_USUARIO/ad-self-service-password.git)
-cd ad-self-service-password
+git clone [https://github.com/clubenaval/changepassword.git](https://github.com/clubenaval/changepassword.git)
+cd changepassword
 
 ```
-
 
 2. Edite o arquivo `docker-compose.yml` e ajuste as variáveis de ambiente com os dados da sua infraestrutura:
 ```yaml
