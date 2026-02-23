@@ -2,6 +2,18 @@
 const eyeOpenSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
 const eyeClosedSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
 
+// Função para exibir o Modal Customizado
+function showModal(title, message) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalMessage').innerText = message;
+    document.getElementById('customModal').classList.add('active');
+}
+
+// Função para fechar o Modal Customizado
+function closeModal() {
+    document.getElementById('customModal').classList.remove('active');
+}
+
 // Alternar olho da senha
 function togglePassword(inputId, iconSpan) {
     const input = document.getElementById(inputId);
@@ -28,35 +40,66 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleSpans = document.querySelectorAll('.toggle-password');
     toggleSpans.forEach(span => span.innerHTML = eyeOpenSVG);
 
-    // Variáveis do Passo 1 (Temporárias)
+    // Elementos do Passo 1
     const usernameTemp = document.getElementById('username_temp');
     const currentPassTemp = document.getElementById('current_password_temp');
     const btnNextStep1 = document.getElementById('btn-next-step1');
 
-    // Variáveis do Passo 2 (Formulário Real)
+    // Elementos do Passo 2
     const usernameAlt = document.getElementById('username_alt');
     const currentPassAlt = document.getElementById('current_password_alt');
     
-    // Botão de avançar do Passo 1 para o Passo 2
+    // Validação em Tempo Real (AJAX) no botão de avançar
     if(btnNextStep1) {
-        btnNextStep1.addEventListener('click', function() {
-            if (usernameTemp.value.trim() === '' || currentPassTemp.value === '') {
-                alert("Por favor, preencha o seu Usuário e a sua Senha Atual para continuar.");
+        btnNextStep1.addEventListener('click', async function() {
+            const userVal = usernameTemp.value.trim();
+            const passVal = currentPassTemp.value;
+
+            if (userVal === '' || passVal === '') {
+                showModal("Dados Incompletos", "Por favor, preencha o seu Usuário e a sua Senha Atual para continuar.");
                 return;
             }
-            // Copia os dados para os inputs escondidos do form real
-            usernameAlt.value = usernameTemp.value;
-            currentPassAlt.value = currentPassTemp.value;
-            
-            // Força validação imediata baseada no usuário recém-copiado
-            validatePasswords();
-            
-            // Vai para a próxima tela
-            switchView('view-change-step2');
+
+            const originalText = btnNextStep1.innerText;
+            btnNextStep1.disabled = true;
+            btnNextStep1.innerText = "Validando no servidor... ⏳";
+            btnNextStep1.style.opacity = "0.7";
+            btnNextStep1.style.cursor = "not-allowed";
+
+            try {
+                const response = await fetch('/validar_senha_atual', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: userVal,
+                        current_password: passVal
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    usernameAlt.value = userVal;
+                    currentPassAlt.value = passVal;
+                    validatePasswords(); 
+                    switchView('view-change-step2');
+                } else {
+                    // SUBSTITUÍDO: Chama o Modal Bonito em vez de alert()
+                    showModal("Atenção", data.mensagem);
+                }
+            } catch (error) {
+                showModal("Erro de Conexão", "Não foi possível conectar com o servidor. Verifique sua rede e tente novamente.");
+                console.error("Erro no fetch:", error);
+            } finally {
+                btnNextStep1.disabled = false;
+                btnNextStep1.innerText = originalText;
+                btnNextStep1.style.opacity = "1";
+                btnNextStep1.style.cursor = "pointer";
+            }
         });
     }
 
-    // Elementos de Validação de Senha (Passo 2)
+    // Validação da Nova Senha (Passo 2)
     const newPassword = document.getElementById('new_password');
     const confirmPassword = document.getElementById('confirm_password');
     const submitBtnAlterar = document.getElementById('btn-final-submit');
@@ -151,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formAlterar.addEventListener('submit', function(e) {
             if (!validatePasswords()) {
                 e.preventDefault();
-                alert('Atenção: A nova senha ainda não atende as regras. Verifique a lista.');
+                showModal("Validação Incompleta", "Por favor, verifique se a nova senha atende a todos os requisitos e se as senhas coincidem.");
             } else {
                 submitBtnAlterar.disabled = true;
                 submitBtnAlterar.innerHTML = "Aguarde, processando... ⏳";
