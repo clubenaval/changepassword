@@ -51,7 +51,16 @@ def validar_senha_atual():
         conn = Connection(server, user=user_upn, password=current_password, auto_bind=True)
         conn.unbind()
         return jsonify({'sucesso': True})
-    except LDAPBindError:
+    except LDAPBindError as e:
+        erro_str = str(e)
+        # Verifica os códigos específicos do Active Directory para senha correta, mas bloqueada/expirada
+        # 532 = ERROR_PASSWORD_EXPIRED
+        # 773 = ERROR_PASSWORD_MUST_CHANGE
+        if '532' in erro_str or '773' in erro_str:
+            print(f"[*] Usuario {user_upn} liberado para o Passo 2 (Senha expirada/troca obrigatoria).", flush=True)
+            return jsonify({'sucesso': True})
+            
+        print(f"[-] Falha real de login para {user_upn}: {erro_str}", flush=True)
         return jsonify({'sucesso': False, 'mensagem': 'A senha atual está incorreta ou o usuário não existe.'})
     except Exception as e:
         print(f"Erro na validacao AJAX: {str(e)}", flush=True)
