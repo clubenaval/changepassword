@@ -31,17 +31,15 @@ Abra o **PowerShell como Administrador** no Windows Server e execute os seguinte
 1. **Habilitar o WinRM:**
    ```powershell
    Enable-PSRemoting -Force
-
-```
+    ```
 
 2. **Liberar conexões NTLM de hosts não pertencentes ao domínio (como o seu container Docker):**
 *Atenção: Para maior segurança em produção, substitua o `*` pelo IP da sua máquina Docker.*
+
 ```powershell
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
 
 ```
-
-
 3. **Reiniciar o serviço para aplicar as regras:**
 ```powershell
 Restart-Service WinRM
@@ -109,4 +107,5 @@ O portal estará disponível em `http://IP_DO_DOCKER:5000`.
 
 ## 👨‍💻 Autor
 
-**Henrique Fagundes** Analista de Infraestrutura e Desenvolvedor Open Source.
+**Henrique Fagundes**
+Analista de Infraestrutura e Desenvolvedor Open Source.
