@@ -1,17 +1,18 @@
 # Usa uma imagem oficial e leve do Python
 FROM python:3.11-slim
 
+# Adiciona suporte a versionamento no build (Vem do GitHub Actions)
+ARG APP_VERSION=dev-local
+ENV APP_VERSION=${APP_VERSION}
+
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copia apenas o arquivo de requisitos primeiro (otimiza o cache do Docker)
-COPY requirements.txt .
+# Copia arquivos do projeto
+COPY . .
 
 # Instala as dependências
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copia o restante dos arquivos do projeto
-COPY . .
+RUN pip install --no-cache-dir -r requirements.txt && rm requirements.txt
 
 # Expõe a porta que o Gunicorn vai utilizar
 EXPOSE 5000

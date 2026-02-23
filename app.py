@@ -53,9 +53,6 @@ def validar_senha_atual():
         return jsonify({'sucesso': True})
     except LDAPBindError as e:
         erro_str = str(e)
-        # Verifica os códigos específicos do Active Directory para senha correta, mas bloqueada/expirada
-        # 532 = ERROR_PASSWORD_EXPIRED
-        # 773 = ERROR_PASSWORD_MUST_CHANGE
         if '532' in erro_str or '773' in erro_str:
             print(f"[*] Usuario {user_upn} liberado para o Passo 2 (Senha expirada/troca obrigatoria).", flush=True)
             return jsonify({'sucesso': True})
@@ -69,6 +66,9 @@ def validar_senha_atual():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # CAPTURA A VERSÃO DO CONTAINER DOCKER AQUI
+    version = os.environ.get('APP_VERSION', 'dev-local')
+
     if request.method == 'POST':
         action = request.form.get('action')
             
@@ -145,7 +145,8 @@ def index():
 
         return redirect(url_for('index'))
 
-    return render_template('index.html')
+    # PASSA A VARIÁVEL PARA O TEMPLATE HTML
+    return render_template('index.html', version=version)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

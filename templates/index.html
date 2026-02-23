@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autoatendimento - Clube Naval</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -147,6 +148,16 @@
             </div>
         </div>
     </div>
+
+    <footer class="fixed-footer">
+        <span class="footer-text">
+            Desenvolvido por <a href="https://www.henrique.tec.br" target="_blank">Henrique Fagundes</a>
+        </span>
+        <span class="footer-separator">|</span>
+        <span class="footer-version">
+            <i class="fas fa-code-branch"></i> {{ version }}
+        </span>
+    </footer>
 
     <div id="customModal" class="modal-overlay">
         <div class="modal-box">

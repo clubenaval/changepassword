@@ -11,6 +11,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding-bottom: 60px; /* IMPORTANTE: Espaço reservado para o rodapé */
 }
 
 .card-container {
@@ -336,4 +337,61 @@ body {
     font-size: 15px;
     line-height: 1.5;
     margin-bottom: 25px;
+}
+
+/* =========================================
+   RODAPÉ FIXO E CENTRALIZADO (ESTILO GITHUB)
+========================================= */
+.fixed-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.95); /* Fundo branco levemente translúcido */
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    font-size: 13px;
+    gap: 15px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+.footer-text {
+    color: #666;
+}
+.footer-text a {
+    color: #d32f2f; /* Vermelho padrão do projeto */
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+.footer-text a:hover {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+.footer-separator {
+    color: #ccc;
+}
+.footer-version {
+    color: #555;
+    background: #f0f0f0;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-family: 'Share Tech Mono', monospace, sans-serif; /* Usando fonte mono igual ao ipv6 */
+    font-weight: bold;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .fixed-footer { 
+        height: auto; 
+        padding: 10px 5px; 
+        flex-direction: column;
+        gap: 5px; 
+    }
+    .footer-separator { display: none; }
 }
