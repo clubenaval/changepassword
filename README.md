@@ -107,4 +107,5 @@ O portal estará disponível em `http://IP_DO_DOCKER:5000`.
 ## 👨‍💻 Autor
 
 **Henrique Fagundes**
+
 Analista de Infraestrutura e Desenvolvedor Open Source.
