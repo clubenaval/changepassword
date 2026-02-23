@@ -25,27 +25,19 @@ WINRM_USER = os.getenv('WINRM_USER')
 WINRM_PASS = os.getenv('WINRM_PASS')
 
 def ad_timestamp_to_datetime(ad_timestamp):
-    """Converte o timestamp do AD (100-nanossegundos desde 1601) para datetime."""
     unix_timestamp = (int(ad_timestamp) / 10000000) - 11644473600
     return datetime.utcfromtimestamp(unix_timestamp)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # Por padrão, a aba ativa é a de alterar
-    active_tab = 'alterar'
-
     if request.method == 'POST':
         action = request.form.get('action')
-        # Se a ação foi consultar, definimos que a aba ativa na volta será a de consultar
-        if action == 'consultar':
-            active_tab = 'consultar'
             
-        username = request.form.get('username').strip()
-        current_password = request.form.get('current_password')
-        new_password = request.form.get('new_password')
-        confirm_password = request.form.get('confirm_password')
+        username = request.form.get('username', '').strip()
+        current_password = request.form.get('current_password', '')
+        new_password = request.form.get('new_password', '')
+        confirm_password = request.form.get('confirm_password', '')
 
-        # Formatação de Usuário
         if '@' in username:
             sam_account = username.split('@')[0]
             user_upn = username
@@ -56,7 +48,6 @@ def index():
             sam_account = username
             user_upn = f"{sam_account}@{AD_DOMAIN}"
 
-        # ETAPA 1: Autenticação LDAP e Consulta opcional
         try:
             print(f"[*] Validando credenciais LDAP: {user_upn}", flush=True)
             server = Server(AD_SERVER, port=389, get_info=ALL, connect_timeout=5)
@@ -81,21 +72,20 @@ def index():
                             expiry_date = ad_timestamp_to_datetime(ad_expiry_value)
                             dias_restantes = (expiry_date - datetime.utcnow()).days
                             data_br = expiry_date.strftime('%d/%m/%Y')
-                            flash(f"Sua senha expira em {dias_restantes} dias ({data_br}).", 'success')
+                            flash(f"Sua senha expira em {dias_restantes} dias (em {data_br}).", 'success')
                 conn.unbind()
-                return render_template('index.html', active_tab=active_tab)
+                return redirect(url_for('index'))
 
             conn.unbind()
 
         except LDAPBindError:
-            flash('Senha atual incorreta ou usuário inválido.', 'error')
-            return render_template('index.html', active_tab=active_tab)
+            flash('Ops! O usuário ou a senha atual estão incorretos. Tente novamente.', 'error')
+            return redirect(url_for('index'))
         except Exception as e:
-            flash('Erro de comunicação com o servidor AD.', 'error')
+            flash('Erro de comunicação com o servidor. Contate o suporte.', 'error')
             print(f"Erro: {str(e)}", flush=True)
-            return render_template('index.html', active_tab=active_tab)
+            return redirect(url_for('index'))
 
-        # ETAPA 2: Alteração de Senha via WinRM
         if action == 'alterar':
             try:
                 session = winrm.Session(AD_SERVER, auth=(WINRM_USER, WINRM_PASS), transport='ntlm', server_cert_validation='ignore')
@@ -108,16 +98,16 @@ def index():
                 """
                 result = session.run_ps(ps_script)
                 if result.status_code == 0:
-                    flash('Senha alterada com sucesso!', 'success')
+                    flash('Sucesso! Sua senha foi alterada. Você já pode usar a nova senha para entrar no computador.', 'success')
                 else:
-                    flash('Erro: A senha não atende aos requisitos de complexidade.', 'error')
+                    flash('A senha não foi aceita pelo sistema. Verifique se ela atende a todas as regras.', 'error')
             except Exception as e:
-                flash('Erro interno ao atualizar a senha via WinRM.', 'error')
+                flash('Ocorreu um erro ao tentar salvar sua nova senha.', 'error')
                 print(f"Erro WinRM: {str(e)}", flush=True)
 
-        return render_template('index.html', active_tab=active_tab)
+        return redirect(url_for('index'))
 
-    return render_template('index.html', active_tab=active_tab)
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

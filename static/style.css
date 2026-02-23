@@ -1,4 +1,3 @@
-/* Reset básico e tipografia */
 * {
     margin: 0;
     padding: 0;
@@ -16,7 +15,7 @@ body {
 
 .card-container {
     width: 100%;
-    max-width: 440px; /* Aumentado ligeiramente para os requisitos de senha */
+    max-width: 460px;
     padding: 20px;
 }
 
@@ -24,50 +23,166 @@ body {
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    padding: 30px 30px 40px 30px;
+    padding: 30px;
     border-top: 5px solid #d32f2f;
 }
 
-/* Estilos do Logo */
 .logo-container {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .card-logo {
     max-width: 120px;
     height: auto;
+}
+
+/* Telas do Assistente (Views) */
+.view-section {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.view-section.active {
     display: block;
-    margin: 0 auto;
 }
 
-.card-header {
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Home / Escolha */
+.main-title {
     text-align: center;
-    margin-bottom: 30px;
-}
-
-.card-header h2 {
-    color: #d32f2f;
+    color: #333;
     font-size: 24px;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
-.card-header p {
+.main-subtitle {
+    text-align: center;
     color: #666;
+    margin-bottom: 25px;
+    font-size: 15px;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.action-card .icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.action-card strong {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.action-card small {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.btn-red {
+    background-color: #fffafb;
+    border-color: #ffcdd2;
+    color: #d32f2f;
+}
+.btn-red:hover {
+    background-color: #ffebee;
+    border-color: #d32f2f;
+    transform: translateY(-2px);
+}
+
+.btn-gray {
+    background-color: #f9f9f9;
+    border-color: #e0e0e0;
+    color: #444;
+}
+.btn-gray:hover {
+    background-color: #f0f0f0;
+    border-color: #777;
+    transform: translateY(-2px);
+}
+
+/* Cabeçalho do Wizard (Passo 1, 2) */
+.wizard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    color: #666;
+    font-weight: bold;
+    cursor: pointer;
     font-size: 14px;
 }
+.btn-back:hover {
+    color: #d32f2f;
+    text-decoration: underline;
+}
 
-/* Container de Input com Ícone de Senha */
+.step-indicator {
+    font-size: 12px;
+    color: #999;
+    background: #f0f0f0;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.step-title {
+    color: #d32f2f;
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.step-desc {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+/* Formulários */
 .input-group {
     margin-bottom: 20px;
 }
 
 .input-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 2px;
     color: #333;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.help-text {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 8px;
 }
 
 .password-wrapper {
@@ -76,31 +191,22 @@ body {
     align-items: center;
 }
 
-.password-wrapper input {
+.input-group input {
     width: 100%;
-    padding: 12px 45px 12px 15px; /* Espaço na direita para o olho */
-    border: 1px solid #ddd;
+    padding: 14px 45px 14px 15px;
+    border: 2px solid #ddd;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 15px;
     transition: all 0.3s ease;
+    background-color: #fafafa;
 }
 
-.input-group input[type="text"]:not(.password-wrapper input) {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.input-group input:focus, .password-wrapper input:focus {
+.input-group input:focus {
     outline: none;
     border-color: #d32f2f;
-    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+    background-color: #fff;
 }
 
-/* Ícone de olho */
 .toggle-password {
     position: absolute;
     right: 12px;
@@ -114,53 +220,46 @@ body {
     transition: color 0.2s ease;
 }
 
-.toggle-password:hover {
-    color: #d32f2f;
-}
+.toggle-password:hover { color: #d32f2f; }
+.toggle-password svg { width: 22px; height: 22px; }
 
-.toggle-password svg {
-    width: 20px;
-    height: 20px;
-}
-
-/* Checklist de Requisitos de Senha */
+/* Checklist */
 .req-list {
     list-style: none;
-    margin-top: 10px;
-    font-size: 12px;
-    padding-left: 2px;
+    margin-top: 12px;
+    font-size: 13px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #eee;
 }
 
 .req-list li {
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     transition: color 0.3s ease;
 }
+.req-list li:last-child { margin-bottom: 0; }
 
-.req-list li.invalid {
-    color: #d32f2f; /* Vermelho padrão para não cumprido */
-}
-
-.req-list li.valid {
-    color: #2e7d32; /* Verde quando cumprido */
-}
+.req-list li.invalid { color: #d32f2f; }
+.req-list li.valid { color: #2e7d32; font-weight: bold; }
 
 .req-list li span {
     margin-right: 8px;
     font-weight: bold;
     display: inline-block;
-    width: 12px;
+    width: 15px;
 }
 
-/* Botões Globais */
+/* Botão Submit */
 .btn-submit {
     width: 100%;
     background-color: #d32f2f;
     color: #ffffff;
     border: none;
-    padding: 14px;
-    border-radius: 6px;
+    padding: 16px;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
@@ -170,25 +269,25 @@ body {
 
 .btn-submit:hover:not(:disabled) {
     background-color: #b71c1c;
-}
-
-.btn-submit:active:not(:disabled) {
-    transform: scale(0.98);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
 }
 
 .btn-submit:disabled {
     background-color: #cccccc !important;
     color: #666666;
     cursor: not-allowed;
-    opacity: 0.7;
 }
 
 /* Alertas */
-.alert {
-    padding: 12px;
-    border-radius: 6px;
+.alert-container {
     margin-bottom: 20px;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 8px;
     font-size: 14px;
+    line-height: 1.5;
     text-align: center;
 }
 
@@ -202,37 +301,4 @@ body {
     background-color: #e8f5e9;
     color: #2e7d32;
     border: 1px solid #c8e6c9;
-}
-
-/* Abas */
-.tabs {
-    display: flex;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 25px;
-    justify-content: space-around;
-}
-
-.tab-btn {
-    background: none;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    color: #666;
-    transition: all 0.3s ease;
-    border-bottom: 3px solid transparent;
-}
-
-.tab-btn.active {
-    color: #d32f2f;
-    border-bottom: 3px solid #d32f2f;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
 }

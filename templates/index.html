@@ -13,81 +13,139 @@
                 <img src="{{ url_for('static', filename='naval.jpg') }}" alt="Clube Naval" class="card-logo">
             </div>
 
-            <div class="tabs">
-                <button class="tab-btn {% if active_tab == 'alterar' %}active{% endif %}" onclick="openTab(event, 'alterarTab')">Alterar Senha</button>
-                <button class="tab-btn {% if active_tab == 'consultar' %}active{% endif %}" onclick="openTab(event, 'consultarTab')">Consultar Validade</button>
-            </div>
-
-            <div class="card-header">
-                <h2 id="headerTitle">{% if active_tab == 'consultar' %}Consultar Validade{% else %}Atualizar Senha{% endif %}</h2>
-                <p id="headerDesc">{% if active_tab == 'consultar' %}Veja quanto tempo falta para sua senha expirar{% else %}Mantenha seu acesso seguro{% endif %}</p>
-            </div>
-
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
+                <div class="alert-container">
                 {% for category, message in messages %}
-                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                  <div class="alert alert-{{ category }}">
+                      <b>{{ 'Atenção:' if category == 'error' else 'Pronto!' }}</b><br>
+                      {{ message }}
+                  </div>
                 {% endfor %}
+                </div>
               {% endif %}
             {% endwith %}
 
-            <div id="alterarTab" class="tab-content {% if active_tab == 'alterar' %}active{% endif %}">
-                <form method="POST" action="/" id="passwordForm">
-                    <input type="hidden" name="action" value="alterar">
+            <div id="view-home" class="view-section active">
+                <h2 class="main-title">Bem-vindo(a)</h2>
+                <p class="main-subtitle">O que você deseja fazer hoje?</p>
+                
+                <div class="action-buttons">
+                    <button class="action-card btn-red" onclick="switchView('view-change-step1')">
+                        <span class="icon">🔑</span>
+                        <strong>Trocar minha Senha</strong>
+                        <small>Criar uma nova senha para acessar o computador</small>
+                    </button>
+                    
+                    <button class="action-card btn-gray" onclick="switchView('view-consult')">
+                        <span class="icon">📅</span>
+                        <strong>Ver Validade da Senha</strong>
+                        <small>Descobrir quantos dias faltam para a senha vencer</small>
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-consult" class="view-section">
+                <div class="wizard-header">
+                    <button class="btn-back" type="button" onclick="switchView('view-home')">← Voltar</button>
+                    <span class="step-indicator">Consulta de Validade</span>
+                </div>
+                
+                <h2 class="step-title">Identifique-se</h2>
+                <p class="step-desc">Para ver a validade, informe seus dados atuais.</p>
+
+                <form method="POST" action="/" id="formConsultar">
+                    <input type="hidden" name="action" value="consultar">
+                    
                     <div class="input-group">
-                        <label for="username_alt">Usuário de Rede</label>
-                        <input type="text" id="username_alt" name="username" required placeholder="Ex: joao.silva">
+                        <label for="username_cons">Seu Usuário</label>
+                        <p class="help-text">Ex: nome.sobrenome (o mesmo que usa no Windows)</p>
+                        <input type="text" id="username_cons" name="username" required>
                     </div>
+                    
                     <div class="input-group">
-                        <label for="current_password_alt">Senha Atual</label>
+                        <label for="current_password_cons">Sua Senha Atual</label>
+                        <p class="help-text">A senha que você acabou de usar para entrar hoje.</p>
                         <div class="password-wrapper">
-                            <input type="password" id="current_password_alt" name="current_password" required>
-                            <span class="toggle-password" onclick="togglePassword('current_password_alt', this)"></span>
+                            <input type="password" id="current_password_cons" name="current_password" required>
+                            <span class="toggle-password" onclick="togglePassword('current_password_cons', this)"></span>
                         </div>
                     </div>
+                    
+                    <button type="submit" class="btn-submit" style="background-color: #444;">Verificar Validade Agora</button>
+                </form>
+            </div>
+
+            <div id="view-change-step1" class="view-section">
+                <div class="wizard-header">
+                    <button class="btn-back" type="button" onclick="switchView('view-home')">← Cancelar</button>
+                    <span class="step-indicator">Passo 1 de 2</span>
+                </div>
+
+                <h2 class="step-title">Quem é você?</h2>
+                <p class="step-desc">Precisamos confirmar sua identidade antes de criar a nova senha.</p>
+
+                <div class="input-group">
+                    <label for="username_temp">Seu Usuário</label>
+                    <p class="help-text">O mesmo que você usa para entrar no Windows.</p>
+                    <input type="text" id="username_temp" required placeholder="Ex: joao.silva">
+                </div>
+                
+                <div class="input-group">
+                    <label for="current_password_temp">Sua Senha Atual</label>
+                    <p class="help-text">A senha que você está usando neste momento.</p>
+                    <div class="password-wrapper">
+                        <input type="password" id="current_password_temp" required>
+                        <span class="toggle-password" onclick="togglePassword('current_password_temp', this)"></span>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-submit" id="btn-next-step1">Avançar para o Passo 2 ➔</button>
+            </div>
+
+            <div id="view-change-step2" class="view-section">
+                <div class="wizard-header">
+                    <button class="btn-back" type="button" onclick="switchView('view-change-step1')">← Voltar ao Passo 1</button>
+                    <span class="step-indicator">Passo 2 de 2</span>
+                </div>
+
+                <h2 class="step-title">Crie a Nova Senha</h2>
+                <p class="step-desc">Siga as regras abaixo para criar uma senha segura e aceita pelo sistema.</p>
+
+                <form method="POST" action="/" id="passwordForm">
+                    <input type="hidden" name="action" value="alterar">
+                    <input type="hidden" id="username_alt" name="username">
+                    <input type="hidden" id="current_password_alt" name="current_password">
+
                     <div class="input-group">
-                        <label for="new_password">Nova Senha</label>
+                        <label for="new_password">Digite a Nova Senha</label>
                         <div class="password-wrapper">
                             <input type="password" id="new_password" name="new_password" required>
                             <span class="toggle-password" onclick="togglePassword('new_password', this)"></span>
                         </div>
                         
                         <ul id="password-requirements" class="req-list">
-                            <li id="req-length" class="invalid"><span>✕</span> Pelo menos 8 caracteres</li>
-                            <li id="req-upper-lower" class="invalid"><span>✕</span> Letras maiúsculas e minúsculas</li>
-                            <li id="req-number" class="invalid"><span>✕</span> Pelo menos um número</li>
-                            <li id="req-special" class="invalid"><span>✕</span> Pelo menos um caractere especial</li>
-                            <li id="req-user" class="invalid"><span>✕</span> Não pode conter o seu usuário</li>
+                            <li id="req-length" class="invalid"><span>✕</span> No mínimo 8 caracteres</li>
+                            <li id="req-upper-lower" class="invalid"><span>✕</span> Ter letras Maiúsculas e Minúsculas</li>
+                            <li id="req-number" class="invalid"><span>✕</span> Ter pelo menos um Número (0-9)</li>
+                            <li id="req-special" class="invalid"><span>✕</span> Ter caractere especial (Ex: @, #, !, $)</li>
+                            <li id="req-user" class="invalid"><span>✕</span> Não pode ser igual ao seu nome de usuário</li>
                         </ul>
                     </div>
+                    
                     <div class="input-group">
-                        <label for="confirm_password">Confirme a Nova Senha</label>
+                        <label for="confirm_password">Repita a Nova Senha</label>
+                        <p class="help-text">Digite a nova senha de novo, exatamente igual, para confirmar.</p>
                         <div class="password-wrapper">
                             <input type="password" id="confirm_password" name="confirm_password" required>
                             <span class="toggle-password" onclick="togglePassword('confirm_password', this)"></span>
                         </div>
                     </div>
-                    <button type="submit" class="btn-submit" disabled style="opacity: 0.5; cursor: not-allowed;">Atualizar Senha Agora</button>
+                    
+                    <button type="submit" class="btn-submit" id="btn-final-submit" disabled style="opacity: 0.5; cursor: not-allowed;">Finalizar e Trocar Senha</button>
                 </form>
             </div>
 
-            <div id="consultarTab" class="tab-content {% if active_tab == 'consultar' %}active{% endif %}">
-                <form method="POST" action="/" id="formConsultar">
-                    <input type="hidden" name="action" value="consultar">
-                    <div class="input-group">
-                        <label for="username_cons">Usuário de Rede</label>
-                        <input type="text" id="username_cons" name="username" required placeholder="Ex: joao.silva">
-                    </div>
-                    <div class="input-group">
-                        <label for="current_password_cons">Senha Atual</label>
-                        <div class="password-wrapper">
-                            <input type="password" id="current_password_cons" name="current_password" required>
-                            <span class="toggle-password" onclick="togglePassword('current_password_cons', this)"></span>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-submit" style="background-color: #444;">Verificar Expiração</button>
-                </form>
-            </div>
         </div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
