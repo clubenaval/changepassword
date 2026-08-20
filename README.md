@@ -54,7 +54,7 @@ Este projeto foi desenhado para ser executado via Docker. Você não precisa de 
 
 1. Clone o repositório:
 ```bash
-git clone [https://github.com/clubenaval/changepassword.git](https://github.com/clubenaval/changepassword.git)
+git clone https://github.com/clubenaval/changepassword.git
 cd changepassword
 
 ```
